@@ -26,4 +26,4 @@ This repository contains **Dockerfile** of [RVM](http://rvm.io/) with [Ruby on R
 
     docker run -d -p 8080:8080 -v <app-dir>:/home/rails/app dmitryzuev/rvm-rails
 
-After few seconds, open `http://<host>` to see the welcome page.
+After few seconds, open `http://<host>:8080` to see the welcome page.
