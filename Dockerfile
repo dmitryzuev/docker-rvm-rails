@@ -12,7 +12,6 @@ FROM ubuntu:14.04
 #  RubyVersion=2.2.0
 #  RailsVersion=4.2.0
 
-
 # Initial configuration
 RUN \
   apt-get update && \
@@ -63,12 +62,21 @@ RUN /bin/bash -l -c "\
 
 # And I think about some unicorn configuration files, but later.
 
+COPY config/unicorn.rb /home/rails/app/config/unicorn.rb
+
+# forward request and error logs to docker log collector
+USER root
+RUN \
+  ln -sf /dev/stdout /home/rails/app/log/unicorn-stdout.log && \
+  ln -sf /dev/stderr /home/rails/app/log/unicorn-stderr.log
+USER rails
+
 # Define mountable directories
 VOLUME ["/home/rails/app"]
-
 
 # Expose ports
 EXPOSE 8080
 
+ENV SECRET_KEY_BASE=41c5c6f724c5d764b3439e4f59ae6530c2ce39e91c412370e8dc4ddfa4f763e8e966ea21cf437abfb32b31fad88a54df97978869174ee2d54f6e38c881cd10f5
 
-CMD /bin/bash -c -l unicorn_rails
+CMD /bin/bash -c -l "SECRET_KEY_BASE=$SECRET_KEY_BASE unicorn_rails -c config/unicorn.rb -E production"
